@@ -1,5 +1,5 @@
 import RingSocketDevice from './base-socket-device.js'
-import { RingDeviceType } from 'ring-client-api'
+import { RingDeviceType } from '@tsightler/ring-client-api'
 import utils from '../lib/utils.js'
 
 export default class Thermostat extends RingSocketDevice {

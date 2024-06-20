@@ -15,7 +15,7 @@
     "js-yaml": "^4.1.0",
     "minimist": "^1.2.8",
     "mqtt": "^5.7.0",
-    "ring-client-api": "12.1.1",
+    "@tsightler/ring-client-api": "12.2.0-alpha1",
     "rxjs": "^7.8.1",
     "werift": "^0.19.3",
     "write-file-atomic": "^5.0.1"

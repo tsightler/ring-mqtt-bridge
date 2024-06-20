@@ -5,18 +5,18 @@ import { fileURLToPath } from 'url'
 import { readFile } from 'fs/promises'
 import writeFileAtomic from 'write-file-atomic'
 import { createHash, randomBytes } from 'crypto'
-import { RingRestClient } from 'ring-client-api/rest-client'
-import { requestInput } from './node_modules/ring-client-api/lib/util.js'
+import { RingRestClient } from '@tsightler/ring-client-api/rest-client'
+import { requestInput } from './node_modules/@tsightler/ring-client-api/lib/util.js'
 
 async function getRefreshToken(systemId) {
     let generatedToken
     const email = await requestInput('Email: ')
     const password = await requestInput('Password: ')
-    const restClient = new RingRestClient({ 
-        email, 
-        password, 
+    const restClient = new RingRestClient({
+        email,
+        password,
         controlCenterDisplayName: `ring-mqtt-${systemId.slice(-5)}`,
-        systemId: systemId 
+        systemId: systemId
     })
     try {
         await restClient.getCurrentAuth()
@@ -28,7 +28,7 @@ async function getRefreshToken(systemId) {
         }
     }
 
-    while(!generatedToken) { 
+    while(!generatedToken) {
         const code = await requestInput('2FA Code: ')
         try {
             generatedToken = await restClient.getAuth(code)
@@ -43,11 +43,11 @@ const main = async() => {
     let refresh_token
     let stateData = {}
     // If running in Docker set state file path as appropriate
-    const stateFile = (fs.existsSync('/etc/cont-init.d/ring-mqtt.sh')) 
+    const stateFile = (fs.existsSync('/etc/cont-init.d/ring-mqtt.sh'))
         ? '/data/ring-state.json'
         : dirname(fileURLToPath(new URL(import.meta.url)))+'/ring-state.json'
-    
-    const configFile = (fs.existsSync('/etc/cont-init.d/ring-mqtt.sh')) 
+
+    const configFile = (fs.existsSync('/etc/cont-init.d/ring-mqtt.sh'))
         ? '/data/config.json'
         : dirname(fileURLToPath(new URL(import.meta.url)))+'/config.json'
 
