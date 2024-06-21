@@ -1,5 +1,5 @@
 import RingSocketDevice from './base-socket-device.js'
-import { RingDeviceType } from '@tsightler/ring-client-api'
+import { RingDeviceType } from 'ring-client-api'
 
 export default class BeamOutdoorPlug extends RingSocketDevice {
     constructor(deviceInfo) {

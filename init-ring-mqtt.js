@@ -5,8 +5,8 @@ import { fileURLToPath } from 'url'
 import { readFile } from 'fs/promises'
 import writeFileAtomic from 'write-file-atomic'
 import { createHash, randomBytes } from 'crypto'
-import { RingRestClient } from '@tsightler/ring-client-api/rest-client'
-import { requestInput } from './node_modules/@tsightler/ring-client-api/lib/util.js'
+import { RingRestClient } from 'ring-client-api/rest-client'
+import { requestInput } from './node_modules/ring-client-api/lib/util.js'
 
 async function getRefreshToken(systemId) {
     let generatedToken
