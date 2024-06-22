@@ -503,7 +503,7 @@ export default class Camera extends RingPolledDevice {
         this.data[dingKind].active_ding = true
 
         // Update last_ding and expire time
-        this.data[dingKind].last_ding = pushData.data?.event?.eventito?.timestamp/1000
+        this.data[dingKind].last_ding = Math.floor(pushData.data?.event?.eventito?.timestamp/1000)
         this.data[dingKind].last_ding_time = pushData.data?.event?.ding?.created_at
         this.data[dingKind].last_ding_expires = this.data[dingKind].last_ding+this.data[dingKind].duration
 
