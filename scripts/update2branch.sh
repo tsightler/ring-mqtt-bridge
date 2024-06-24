@@ -39,7 +39,7 @@ else
             ;;
     esac
     rm -f /usr/local/bin/mediamtx
-    curl -L -s "https://github.com/bluenviron/mediamtx/releases/download/${MEDIAMTX_VERSION}/mediamtx_${MEDIAMTX_VERSION}_linux_${RSSARCH}.tar.gz" | tar zxf - -C /usr/local/bin mediamtx &&
+    curl -L -s "https://github.com/bluenviron/mediamtx/releases/download/${MEDIAMTX_VERSION}/mediamtx_${MEDIAMTX_VERSION}_linux_${MEDIAMTX_ARCH}.tar.gz" | tar zxf - -C /usr/local/bin mediamtx &&
     chmod +x /usr/local/bin/mediamtx
 
     case "${APK_ARCH}" in
