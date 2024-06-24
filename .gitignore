@@ -6,3 +6,4 @@ config.*.json
 ring-state*.json
 ring-test.js
 config/go2rtc.yaml
+config/mediamtx.yaml

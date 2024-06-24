@@ -32,13 +32,13 @@ cleanup() {
         mosquitto_pub -i "${client_id}_pub" -L "mqtt://127.0.0.1:51883/${debug_topic}" -m "Deactivating ${type} stream due to signal from RTSP server (no more active clients or publisher ended stream)"
         mosquitto_pub -i "${client_id}_pub" -L "mqtt://127.0.0.1:51883/${command_topic}" -m "OFF"
     fi
-    # Kill the spawed mosquitto_sub process or it will stay listening forever
-    kill $(pgrep -f "mosquitto_sub.*${client_id}_sub" | grep -v ^$$\$)
+    # Killing the stream ffmpeg process forces faster call teardown
+    kill $(pgrep -f "ffmpeg.*${rtsp_pub_url}" | grep -v ^$$\$)
+    sleep 1
     exit 0
 }
 
-# go2rtc does not pass stdout through from child processes so send debug logs
-# via main process using MQTT messages
+# Pass logs from stdout to the ring-mqtt process via MQTT messages
 logger() {
     mosquitto_pub -i "${client_id}_pub" -L "mqtt://127.0.0.1:51883/${debug_topic}" -m "${1}"
 }

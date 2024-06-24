@@ -87,6 +87,7 @@ async function startLiveStream(streamData) {
 }
 
 async function stopLiveStream() {
+    parentPort.postMessage({type: 'log_info', data: 'Live stream WebRTC worker received stop command'})
     liveStream.stop()
     await new Promise(res => setTimeout(res, 2000))
     if (liveStream) {

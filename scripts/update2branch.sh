@@ -22,25 +22,25 @@ else
     echo "The ring-mqtt-${BRANCH} branch has been updated."
 
     APK_ARCH="$(apk --print-arch)"
-    GO2RTC_VERSION="v1.9.4"
+    MEDIAMTX_VERSION="v1.8.3"
     case "${APK_ARCH}" in
         x86_64)
-            GO2RTC_ARCH="amd64"
+            MEDIAMTX_ARCH="amd64"
             ;;
         aarch64)
-            GO2RTC_ARCH="arm64"
+            MEDIAMTX_ARCH="arm64v8"
             ;;
         armv7|armhf)
-            GO2RTC_ARCH="arm"
+            MEDIAMTX_ARCH="armv7"
             ;;
         *)
             echo >&2 "ERROR: Unsupported architecture '$APK_ARCH'"
             exit 1
             ;;
     esac
-    rm -f /usr/local/bin/go2rtc
-    curl -L -s -o /usr/local/bin/go2rtc "https://github.com/AlexxIT/go2rtc/releases/download/${GO2RTC_VERSION}/go2rtc_linux_${GO2RTC_ARCH}"
-    chmod +x /usr/local/bin/go2rtc
+    rm -f /usr/local/bin/mediamtx
+    curl -L -s "https://github.com/aler9/rtsp-simple-server/releases/download/${MEDIAMTX_VERSION}/mediamtx_${MEDIA_MTX_VERSION}_linux_${RSSARCH}.tar.gz" | tar zxf - -C /usr/local/bin mediamtx &&
+    chmod +x /usr/local/bin/mediamtx
 
     case "${APK_ARCH}" in
         x86_64)
