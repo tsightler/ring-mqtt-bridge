@@ -1,3 +1,9 @@
+## v5.8.1
+Continued refactoring and code cleanup, no significant feature changes in this release.
+
+**Dependency Updates**
+ - chalk 5.4.0
+
 ## v5.8.0
 The 5.8.x branch is focused primarily on cleaning up various portions of the code to improve long-term maintainability, there are no major features planned for this branch.
 
