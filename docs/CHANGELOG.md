@@ -1,5 +1,5 @@
-## v5.8.1
-Continued refactoring and code cleanup, no significant feature changes in this release.
+## v5.9.0
+The release introduces a new feature, the snapshot stream.
 
 **Dependency Updates**
  - chalk 5.4.0

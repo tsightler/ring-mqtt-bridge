@@ -14,7 +14,7 @@ client_id="${device_id}_${type}"  # Id used to connect to the MQTT broker, camer
 activated="false"
 reason="none"
 
-[[ ${type} = "live" ]] && base_topic="${base_topic}/stream" || base_topic="${base_topic}/event_stream"
+[[ ${type} = "live" ]] && base_topic="${base_topic}/stream" || base_topic="${base_topic}/${type}_stream"
 json_attribute_topic="${base_topic}/attributes"
 command_topic="${base_topic}/command"
 debug_topic="${base_topic}/debug"

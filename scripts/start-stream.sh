@@ -15,7 +15,7 @@
 
 # Required command line arguments
 device_id=${1}     # Camera device Id
-type=${2}          # Stream type ("live" or "event")
+type=${2}          # Stream type ("live"/"event"/"snapshot")
 base_topic=${3}    # Command topic for Camera entity
 rtsp_pub_url=${4}  # URL for publishing RTSP stream
 client_id="${device_id}_${type}"  # Id used to connect to the MQTT broker, camera Id + event type
@@ -32,7 +32,7 @@ script_dir=$(dirname "$0")
 ${script_dir}/monitor-stream.sh ${1} ${2} ${3} ${4} &
 
 # Build the MQTT topics
-[[ ${type} = "live" ]] && base_topic="${base_topic}/stream" || base_topic="${base_topic}/event_stream"
+[[ ${type} = "live" ]] && base_topic="${base_topic}/stream" || base_topic="${base_topic}/${type}_stream"
 json_attribute_topic="${base_topic}/attributes"
 command_topic="${base_topic}/command"
 debug_topic="${base_topic}/debug"

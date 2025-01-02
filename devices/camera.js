@@ -83,6 +83,12 @@ export default class Camera extends RingPolledDevice {
                     session: false,
                     publishedStatus: ''
                 },
+                snapshot: {
+                    state: 'OFF',
+                    status: 'inactive',
+                    session: false,
+                    publishedStatus: ''
+                },
                 keepalive:{
                     active: false,
                     session: false,
@@ -158,6 +164,13 @@ export default class Camera extends RingPolledDevice {
                     'On-demand 4 (Transcoded)', 'On-demand 5 (Transcoded)',
                 ],
                 attributes: true
+            },
+            snapshot_stream: {
+                component: 'switch',
+                category: 'diagnostic',
+                icon: 'mdi:vhs',
+                // Use internal MQTT server for inter-process communications
+                ipc: true
             },
             ...this.device.isDoorbot ? {
                 ding: {
@@ -899,6 +912,53 @@ export default class Camera extends RingPolledDevice {
         }
     }
 
+    async startSnapshotStream(rtspPublishUrl) {
+        if (!this.data.snapshot.cache) {
+            this.debug(`Could not start the snapshot stream because No snapshot is available in the snapshot cache`)
+            this.data.stream.snapshot.status = 'failed'
+            this.data.stream.snapshot.session = false
+            this.publishStreamState()
+            return
+        }
+
+        this.debug(`Starting a snapshot stream using the most recently cached snapshot`)
+
+        try {
+            this.data.stream.snapshot.session = spawn(pathToFfmpeg, [
+                '-f', 'image2pipe',
+                '-framerate', '5',
+                '-i', '-',
+                '-c:v', 'libx264',
+                '-preset', 'ultrafast',
+                '-tune', 'zerolatency',
+                '-vf', `scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2`,
+                '-flags', '+global_header',
+                '-rtsp_transport', 'tcp',
+                '-f', 'rtsp',
+                rtspPublishUrl
+            ])
+
+            this.data.stream.snapshot.session.on('spawn', async () => {
+                this.debug(`The snapshot stream has started`)
+                this.data.stream.snapshot.status = 'active'
+                this.publishStreamState()
+                this.data.stream.snapshot.session.stdin.write(this.data.snapshot.cache)
+            })
+
+            this.data.stream.snapshot.session.on('close', async () => {
+                this.debug(`The snapshot stream has ended`)
+                this.data.stream.snapshot.status = 'inactive'
+                this.data.stream.snapshot.session = false
+                this.publishStreamState()
+            })
+        } catch(e) {
+            this.debug(e)
+            this.data.stream.snapshot.status = 'failed'
+            this.data.stream.snapshot.session = false
+            this.publishStreamState()
+        }
+    }
+
     async startKeepaliveStream() {
         const duration = 86400
         if (this.data.stream.keepalive.active) { return }
@@ -1119,6 +1179,9 @@ export default class Camera extends RingPolledDevice {
                 break;
             case 'event_stream/command':
                 this.setEventStreamState(message)
+                break;
+            case 'snapshot_stream/command':
+                this.setSnapshotStreamState(message)
                 break;
             case 'event_select/command':
                 this.setEventSelect(message)
@@ -1357,6 +1420,36 @@ export default class Camera extends RingPolledDevice {
                     break;
                 default:
                     this.debug(`Received unknown command for event stream`)
+            }
+        }
+    }
+
+    setSnapshotStreamState(message) {
+        const command = message.toLowerCase()
+        this.debug(`Received set snapshot stream state ${message}`)
+        if (command.startsWith('on-demand')) {
+            if (this.data.stream.snapshot.status === 'active' || this.data.stream.event.status === 'activating') {
+                this.publishStreamState()
+            } else {
+                this.data.stream.snapshot.status = 'activating'
+                this.publishStreamState()
+                this.startSnapshotStream(message.split(' ')[1]) // Portion after backslash is RTSP publish URL
+            }
+        } else {
+            switch (command) {
+                case 'on':
+                    this.debug(`Snapshot stream can only be started on-demand!`)
+                    break;
+                case 'off':
+                    if (this.data.stream.snapshot.session) {
+                        this.data.stream.snapshot.session.kill()
+                    } else {
+                        this.data.stream.snapshot.status = 'inactive'
+                        this.publishStreamState()
+                    }
+                    break;
+                default:
+                    this.debug(`Received unknown command for snapshot stream`)
             }
         }
     }
