@@ -168,6 +168,7 @@ export default class Camera extends RingPolledDevice {
             snapshot_stream: {
                 component: 'switch',
                 category: 'diagnostic',
+                attributes: true,
                 icon: 'mdi:vhs',
                 // Use internal MQTT server for inter-process communications
                 ipc: true
@@ -688,7 +689,7 @@ export default class Camera extends RingPolledDevice {
     }
 
     publishStreamState(isPublish) {
-        ['live', 'event'].forEach(type => {
+        ['live', 'event', 'snapshot'].forEach(type => {
             const entityProp = (type === 'live') ? 'stream' : `${type}_stream`
             if (this.entity.hasOwnProperty(entityProp)) {
                 const streamState = (this.data.stream[type].status === 'active' || this.data.stream[type].status === 'activating') ? 'ON' : 'OFF'
